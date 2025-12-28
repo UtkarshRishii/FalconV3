@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FALCON Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@300;400;600&family=DM+Mono:wght@400;500&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ivory: #FFFEF9;
+            --charcoal: #1C1C1C;
+            --slate: #4A4A4A;
+            --sage: #8B9A7D;
+            --rust: #B85C38;
+            --gold: #D4AF37;
+            --mist: rgba(139, 154, 125, 0.08);
+            --shadow-lift: 0 8px 40px rgba(28, 28, 28, 0.12);
+            --shadow-subtle: 0 2px 12px rgba(28, 28, 28, 0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Newsreader', serif;
+            background: linear-gradient(165deg, #F5F1E8 0%, #E8E4DA 50%, #DDD8CC 100%);
+            color: var(--charcoal);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(139, 154, 125, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 25s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -15%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(184, 92, 56, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 30s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 30px) scale(1.1); }
+        }
+
+        .interface-container {
+            width: 100%;
+            max-width: 520px;
+            height: 85vh;
+            max-height: 900px;
+            background: var(--ivory);
+            border-radius: 32px;
+            box-shadow: var(--shadow-lift);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(28, 28, 28, 0.08);
+            animation: interface-appear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes interface-appear {
+            0% { 
+                opacity: 0; 
+                transform: translateY(40px) scale(0.95);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            padding: 2rem 2.5rem 1.5rem;
+            background: linear-gradient(180deg, var(--ivory) 0%, rgba(255, 254, 249, 0.95) 100%);
+            border-bottom: 2px solid var(--mist);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .brand-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: var(--charcoal);
+            line-height: 1;
+            position: relative;
+        }
+
+        .brand-subtitle {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: var(--slate);
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+
+        .status-badge {
+            background: linear-gradient(135deg, var(--sage) 0%, #7A8B6D 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .status-pulse {
+            width: 7px;
+            height: 7px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .conversation-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem 2.5rem;
+            position: relative;
+            scrollbar-width: thin;
+            scrollbar-color: var(--sage) transparent;
+        }
+
+        .conversation-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .conversation-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .conversation-wrapper::-webkit-scrollbar-thumb {
+            background-color: var(--sage);
+            border-radius: 3px;
+        }
+
+        .welcome-prompt {
+            text-align: center;
+            margin: 4rem auto;
+            max-width: 320px;
+            animation: fade-in 1s ease-out 0.3s both;
+        }
+
+        @keyframes fade-in {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--sage) 0%, var(--rust) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+            color: var(--slate);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            animation: message-slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes message-slide-in {
+            0% {
+                opacity: 0;
+                transform: translateY(15px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--slate);
+            margin-bottom: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .message-content {
+            padding: 1.25rem 1.75rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            line-height: 1.7;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--charcoal) 0%, #2A2A2A 100%);
+            color: var(--ivory);
+            box-shadow: var(--shadow-subtle);
+            border-bottom-right-radius: 8px;
+        }
+
+        .message.ai .message-content {
+            background: var(--mist);
+            color: var(--charcoal);
+            border: 1px solid rgba(139, 154, 125, 0.15);
+            border-bottom-left-radius: 8px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 1.25rem 1.75rem;
+            background: var(--mist);
+            border-radius: 20px;
+            border-bottom-left-radius: 8px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--sage);
+            border-radius: 50%;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        .input-section {
+            padding: 2rem 2.5rem 2.5rem;
+            background: linear-gradient(0deg, var(--ivory) 0%, rgba(255, 254, 249, 0.95) 100%);
+            border-top: 2px solid var(--mist);
+            position: relative;
+        }
+
+        .mic-control {
+            width: 100%;
+            height: 64px;
+            background: linear-gradient(135deg, var(--rust) 0%, #A84D2E 100%);
+            color: white;
+            border: none;
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-family: 'DM Mono', monospace;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: var(--shadow-subtle);
+            text-transform: uppercase;
+        }
+
+        .mic-control::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .mic-control:hover:not(:disabled)::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .mic-control:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 48px rgba(184, 92, 56, 0.3);
+        }
+
+        .mic-control:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .mic-control:disabled {
+            background: var(--slate);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .mic-control.listening {
+            background: linear-gradient(135deg, var(--sage) 0%, #7A8B6D 100%);
+            animation: listening-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes listening-pulse {
+            0%, 100% { box-shadow: 0 8px 40px rgba(139, 154, 125, 0.3); }
+            50% { box-shadow: 0 12px 60px rgba(139, 154, 125, 0.5); }
+        }
+
+        .mic-control.processing {
+            background: linear-gradient(135deg, var(--gold) 0%, #C29D2F 100%);
+        }
+
+        .mic-icon {
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mic-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .decorative-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--sage) 50%, transparent 100%);
+            width: 100%;
+            top: 50%;
+            left: 0;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+            }
+
+            .interface-container {
+                max-width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .header {
+                padding: 1.5rem 1.5rem 1rem;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .conversation-wrapper {
+                padding: 1.5rem;
+            }
+
+            .input-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="interface-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="brand">
+                    <h1 class="brand-title">Falcon</h1>
+                    <div class="brand-subtitle">Neural Interface</div>
+                </div>
+                <div class="status-badge">
+                    <div class="status-pulse"></div>
+                    <span>Active</span>
+                </div>
+            </div>
+            <div class="decorative-line"></div>
+        </header>
+
+        <div id="conversation" class="conversation-wrapper">
+            <div class="welcome-prompt">
+                <div class="welcome-icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <p class="welcome-text">
+                    Press the button below to begin a conversation with Falcon
+                </p>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <button id="micButton" class="mic-control">
+                <i id="micIcon" class="fas fa-microphone mic-icon"></i>
+                <span id="micText" class="mic-text">Speak</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="/eel.js"></script>
+    <script>
+        const conversation = document.getElementById('conversation');
+        const micButton = document.getElementById('micButton');
+        const micIcon = document.getElementById('micIcon');
+        const micText = document.getElementById('micText');
+        const welcomePrompt = document.querySelector('.welcome-prompt');
+
+        let isListening = false;
+        let isProcessing = false;
+        let typingIndicator = null;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                isProcessing = false;
+                updateButtonState('listening');
+                hideWelcome();
+            };
+
+            recognition.onresult = async (event) => {
+                stopListening();
+                isProcessing = true;
+                
+                const userQuery = event.results[0][0].transcript;
+                addMessage(userQuery, 'user');
+                showTypingIndicator();
+                updateButtonState('processing');
+
+                try {
+                    const result = await eel.process_user_query(userQuery)();
+                    removeTypingIndicator();
+
+                    if (result && result.response) {
+                        const aiResponse = result.response;
+                        addMessage(aiResponse, 'ai');
+
+                        if (result.should_speak === true) {
+                            const errorPhrases = ["error", "apologize", "couldn't formulate", "issue processing", "neural network connection interrupted"];
+                            const shouldSkipSpeak = errorPhrases.some(phrase => aiResponse.toLowerCase().includes(phrase));
+                            
+                            if (!shouldSkipSpeak) {
+                                eel.request_tts(aiResponse)();
+                            }
+                        }
+                    } else {
+                        addMessage("Falcon returned an unexpected response.", 'ai');
+                    }
+                } catch (error) {
+                    console.error("Error calling Python via Eel:", error);
+                    removeTypingIndicator();
+                    addMessage('Neural network connection interrupted. Please try again.', 'ai');
+                } finally {
+                    isProcessing = false;
+                    updateButtonState('idle');
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                let errorMessage = 'Speech input error. Try again.';
+                if (event.error === 'no-speech') errorMessage = 'No speech detected.';
+                else if (event.error === 'audio-capture') errorMessage = 'Microphone error.';
+                else if (event.error === 'not-allowed') errorMessage = 'Microphone access denied.';
+                
+                removeTypingIndicator();
+                addMessage(errorMessage, 'ai');
+                isProcessing = false;
+                stopListening();
+                updateButtonState('idle');
+            };
+
+            recognition.onend = () => {
+                if (!isProcessing) {
+                    stopListening();
+                    updateButtonState('idle');
+                }
+            };
+
+            micButton.addEventListener('click', () => {
+                if (isProcessing) return;
+
+                if (!isListening) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Error starting recognition:", e);
+                        addMessage("Could not start listening. Mic issue?", 'ai');
+                        updateButtonState('idle');
+                    }
+                } else {
+                    recognition.stop();
+                }
+            });
+
+        } else {
+            addMessage("Your browser doesn't support speech recognition. Try Chrome or Edge.", 'ai');
+            hideWelcome();
+            micButton.disabled = true;
+            updateButtonState('idle');
+            micText.textContent = 'Not Supported';
+            micIcon.classList.remove('fa-microphone');
+            micIcon.classList.add('fa-times-circle');
+        }
+
+        function stopListening() {
+            isListening = false;
+        }
+
+        function updateButtonState(state) {
+            micButton.classList.remove('listening', 'processing');
+            
+            switch(state) {
+                case 'listening':
+                    micButton.classList.add('listening');
+                    micIcon.className = 'fas fa-stop-circle mic-icon';
+                    micText.textContent = 'Listening';
+                    break;
+                case 'processing':
+                    micButton.classList.add('processing');
+                    micIcon.className = 'fas fa-spinner fa-spin mic-icon';
+                    micText.textContent = 'Processing';
+                    break;
+                case 'idle':
+                default:
+                    micIcon.className = 'fas fa-microphone mic-icon';
+                    micText.textContent = 'Speak';
+                    break;
+            }
+        }
+
+        function hideWelcome() {
+            if (welcomePrompt) {
+                welcomePrompt.style.display = 'none';
+            }
+        }
+
+        function addMessage(text, type) {
+            hideWelcome();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', type);
+            
+            const label = document.createElement('div');
+            label.classList.add('message-label');
+            label.textContent = type === 'user' ? 'You' : 'Falcon';
+            
+            const content = document.createElement('div');
+            content.classList.add('message-content');
+            content.textContent = text;
+            
+            messageDiv.appendChild(label);
+            messageDiv.appendChild(content);
+            conversation.appendChild(messageDiv);
+            
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            if (!typingIndicator) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'ai');
+                
+                const label = document.createElement('div');
+                label.classList.add('message-label');
+                label.textContent = 'Falcon';
+                
+                const indicator = document.createElement('div');
+                indicator.classList.add('typing-indicator');
+                indicator.innerHTML = `
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                `;
+                
+                messageDiv.appendChild(label);
+                messageDiv.appendChild(indicator);
+                conversation.appendChild(messageDiv);
+                typingIndicator = messageDiv;
+                
+                scrollToBottom();
+            }
+        }
+
+        function removeTypingIndicator() {
+            if (typingIndicator) {
+                typingIndicator.remove();
+                typingIndicator = null;
+            }
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                conversation.scrollTop = conversation.scrollHeight;
+            }, 50);
+        }
+
+        updateButtonState('idle');
+    </script>
+</body>
+</html>

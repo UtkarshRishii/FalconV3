@@ -1,0 +1,15 @@
+# Falcon AI Pro - Requirements
+
+openai
+python-dotenv
+google-generativeai
+psutil
+pyautogui
+pywhatkit
+pyperclip
+opencv-python
+pillow
+requests
+beautifulsoup4
+aiohttp
+asyncio
